@@ -17,6 +17,9 @@ App para que una familia administre sus propiedades, arriendos, gastos y documen
 - **Propiedades y personas:** fichas con foto, contrato, personas asociadas, movimientos, documentos y solicitudes.
 - **Documentos:** contratos, escrituras y certificados con fecha de vencimiento, en una carpeta privada.
 - **Portal del arrendatario:** ve su próximo pago, su historial, su contrato y puede avisar un problema. No ve nada más: lo garantiza la base de datos.
+- **Bitácora:** recuerdos y eventos familiares con fotos, y reportes de incidentes, robos, daños y emergencias por propiedad. Un incidente abierto baja la salud de la propiedad y avisa al administrador; el arrendatario puede reportar los de su propiedad.
+- **Seguros:** suma lo que podrías asegurar, arma una solicitud de cotización colectiva lista para enviar a corredoras y enlaza a aseguradoras con cotización en línea.
+- **Test de vivienda:** sin crear cuenta, calcula cuánto arriendo puede pagar un hogar según ingresos, familia, educación y gastos, y muestra en qué comunas de Santiago le alcanza, con búsquedas listas en Portal Inmobiliario, Yapo, Toctoc e iCasas. Se puede repetir cuando la familia se quiera mudar.
 
 ## Probarla ahora (sin cuenta)
 
@@ -40,7 +43,7 @@ Mientras no configures Supabase, la versión publicada queda en modo de prueba (
 ## Conectar tus datos reales (Supabase)
 
 1. Crea un proyecto en [supabase.com](https://supabase.com) (región São Paulo).
-2. **SQL Editor:** pega y ejecuta [`supabase/schema.sql`](supabase/schema.sql). Crea las 20 tablas, los permisos por rol, el historial, los cobros mensuales automáticos y las alertas diarias.
+2. **SQL Editor:** pega y ejecuta [`supabase/schema.sql`](supabase/schema.sql). Crea las 20 tablas, los permisos por rol, el historial, los cobros mensuales automáticos y las alertas diarias. Después, en una consulta nueva, ejecuta [`supabase/002_bitacora_y_test_vivienda.sql`](supabase/002_bitacora_y_test_vivienda.sql).
 3. **Authentication → URL Configuration:** en *Site URL* pon la dirección de tu GitHub Pages.
 4. En GitHub: **Settings → Secrets and variables → Actions → New repository secret**:
    - `VITE_SUPABASE_URL`: Project URL (Supabase → Project Settings → API)
@@ -71,6 +74,8 @@ Este repositorio es público: contiene solo código, nunca datos. Tus datos vive
 | `src/components/` | Piezas reutilizables: Barrio, íconos, hojas, gráfico |
 | `src/lib/juego.ts` | Reglas del modo juego (salud, racha, logros, desafío). Cambia aquí los puntos |
 | `src/lib/finanzas.ts` | Indicadores, vencimientos y resúmenes por mes |
+| `src/lib/vivienda.ts` | Reglas del test de vivienda (tope de arriendo, dormitorios, comunas, enlaces) |
+| `src/lib/comunas.ts` | Arriendo por m² de 24 comunas, con su fuente y fecha. Actualízalo cada pocos meses |
 | `src/lib/data/` | Acceso a datos: `supabase.ts` (real) y `local.ts` (modo de prueba) con la misma interfaz |
 | `src/styles.css` | Colores, tipografías y estilos. Los colores están arriba, en `:root` |
 | `supabase/` | Base de datos (`schema.sql`), función de notificaciones push y su guía |
@@ -82,6 +87,8 @@ Tecnologías: React 18, TypeScript, Vite, PWA (funciona sin conexión), Supabase
 
 - **Cambiar cuánto resta un pago atrasado:** `src/lib/juego.ts`, función `saludPropiedad`.
 - **Agregar un logro:** `src/lib/juego.ts`, función `logros` (copia uno existente).
+- **Actualizar precios de arriendo:** `src/lib/comunas.ts`, cambia los valores y la fecha `ACTUALIZADO`.
+- **Agregar una aseguradora:** `src/screens/Seguros.tsx`, lista `ASEGURADORAS`.
 - **Cambiar colores:** `src/styles.css`, bloque `:root`.
 - **Agregar un campo a propiedades:** columna en Supabase → tipo en `src/lib/types.ts` → campo en `FormPropiedad` (`src/screens/Propiedades.tsx`).
 

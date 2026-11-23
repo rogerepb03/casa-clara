@@ -1,4 +1,5 @@
 import type { Datos, Propiedad } from './types';
+import { ES_INCIDENTE } from './types';
 import { aISO, claveMes, diasEntre, inicioSemana, sumarDias, sumarMeses } from './fechas';
 import { estadoReal } from './finanzas';
 
@@ -62,6 +63,15 @@ export function saludPropiedad(p: Propiedad, d: Datos, hoy: Date): Salud {
   const abiertas = d.solicitudes.filter((s) => s.propiedad_id === p.id && s.estado === 'abierta' && s.created_at && diasEntre(s.created_at.slice(0, 10), h) > 7);
   if (abiertas.length) {
     motivos.push({ texto: 'Solicitud sin respuesta hace más de 7 días', puntos: -10, accion: 'Responde o agenda la reparación', ruta });
+  }
+
+  const incidentes = (d.publicaciones ?? []).filter((x) => x.propiedad_id === p.id && ES_INCIDENTE[x.tipo] && !x.resuelto);
+  if (incidentes.length) {
+    const resta = Math.min(30, incidentes.reduce((s, x) => s + ({ 3: 20, 2: 10, 1: 5 }[x.gravedad ?? 2] ?? 10), 0));
+    motivos.push({
+      texto: incidentes.length === 1 ? `Incidente abierto: ${incidentes[0].titulo.toLowerCase()}` : `${incidentes.length} incidentes abiertos`,
+      puntos: -resta, accion: 'Revísalo en la bitácora y márcalo resuelto', ruta: '/bitacora?ver=incidentes',
+    });
   }
 
   const puntaje = Math.max(0, Math.min(100, 100 + motivos.reduce((s, m) => s + m.puntos, 0)));

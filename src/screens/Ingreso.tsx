@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { IBrujula, IFlecha } from '../components/Iconos';
 import { api } from '../lib/data';
 import { useApp } from '../state/App';
 import { Campo } from '../components/Comunes';
@@ -106,6 +108,14 @@ export default function Ingreso() {
             )}
           </form>
         )}
+        <Link to="/test-vivienda" className="panel invitacion">
+          <span className="icono"><IBrujula /></span>
+          <span style={{ flex: 1 }}>
+            <strong style={{ display: 'block' }}>¿Buscas dónde arrendar?</strong>
+            <span className="quieto chico">Haz el test de vivienda: en 2 minutos te mostramos cuánto puedes pagar y en qué comunas buscar. Sin crear cuenta.</span>
+          </span>
+          <IFlecha width={18} />
+        </Link>
       </div>
     </main>
   );

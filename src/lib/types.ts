@@ -137,6 +137,28 @@ export interface Solicitud {
   created_at?: string;
 }
 
+export type TipoPublicacion = 'recuerdo' | 'evento_familiar' | 'incidente' | 'robo' | 'dano' | 'desastre';
+
+export interface Publicacion {
+  id: string;
+  espacio_id: string;
+  tipo: TipoPublicacion;
+  titulo: string;
+  texto: string | null;
+  fecha: string;
+  propiedad_id: string | null;
+  fotos: string[];
+  visibilidad: 'familia' | 'propiedad';
+  gravedad: number | null;
+  resuelto: boolean;
+  creado_por?: string;
+  created_at?: string;
+}
+
+export const ES_INCIDENTE: Record<TipoPublicacion, boolean> = {
+  recuerdo: false, evento_familiar: false, incidente: true, robo: true, dano: true, desastre: true,
+};
+
 export interface Miembro {
   id: string;
   espacio_id: string;
@@ -158,11 +180,12 @@ export interface Datos {
   documentos: Documento[];
   solicitudes: Solicitud[];
   miembros: Miembro[];
+  publicaciones: Publicacion[];
 }
 
-export type Tabla = keyof Datos;
+export type Tabla = keyof Datos | 'tests_vivienda';
 
 export const DATOS_VACIOS: Datos = {
   propiedades: [], personas: [], propiedad_personas: [], contratos: [], categorias: [],
-  movimientos: [], documentos: [], solicitudes: [], miembros: [],
+  movimientos: [], documentos: [], solicitudes: [], miembros: [], publicaciones: [],
 };

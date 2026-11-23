@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import '@fontsource/atkinson-hyperlegible/400.css';
 import '@fontsource/atkinson-hyperlegible/700.css';
 import '@fontsource/bricolage-grotesque/600.css';
@@ -15,12 +15,15 @@ import Finanzas, { NuevoMovimiento } from './screens/Finanzas';
 import Documentos from './screens/Documentos';
 import Mas, { Logros, Miembros, Personas } from './screens/Mas';
 import MiArriendo, { PagosArrendatario, SolicitudesArrendatario } from './screens/Arrendatario';
-import { IDocumentos, IFinanzas, IHerramienta, IInicio, IMas, IPropiedades } from './components/Iconos';
+import Bitacora, { NuevaPublicacion } from './screens/Bitacora';
+import Seguros from './screens/Seguros';
+import TestVivienda from './screens/TestVivienda';
+import { ICamara, IFinanzas, IHerramienta, IInicio, IMas, IPropiedades } from './components/Iconos';
 
 function Navegacion({ arrendatario }: { arrendatario: boolean }) {
   const items = arrendatario
-    ? [['/', 'Mi arriendo', IInicio], ['/pagos', 'Pagos', IFinanzas], ['/solicitudes', 'Solicitudes', IHerramienta], ['/documentos', 'Documentos', IDocumentos], ['/mas', 'Cuenta', IMas]] as const
-    : [['/', 'Inicio', IInicio], ['/propiedades', 'Propiedades', IPropiedades], ['/finanzas', 'Finanzas', IFinanzas], ['/documentos', 'Documentos', IDocumentos], ['/mas', 'Más', IMas]] as const;
+    ? [['/', 'Mi arriendo', IInicio], ['/pagos', 'Pagos', IFinanzas], ['/bitacora', 'Bitácora', ICamara], ['/solicitudes', 'Avisos', IHerramienta], ['/mas', 'Cuenta', IMas]] as const
+    : [['/', 'Inicio', IInicio], ['/propiedades', 'Propiedades', IPropiedades], ['/finanzas', 'Finanzas', IFinanzas], ['/bitacora', 'Bitácora', ICamara], ['/mas', 'Más', IMas]] as const;
   return (
     <nav className="nav" aria-label="Principal">
       <ul>
@@ -34,6 +37,7 @@ function Navegacion({ arrendatario }: { arrendatario: boolean }) {
 
 function Raiz() {
   const { cargando, usuario, membresia, error, esArrendatario, textoAviso, iniciar } = useApp();
+  const { pathname } = useLocation();
 
   if (cargando) {
     return <main className="app" aria-busy="true"><div className="encabezado"><h1 style={{ color: 'var(--tinta-3)' }}>Casa Clara</h1></div></main>;
@@ -47,7 +51,7 @@ function Raiz() {
       </main>
     );
   }
-  if (!usuario) return <Ingreso />;
+  if (!usuario) return pathname.startsWith('/test-vivienda') ? <TestVivienda /> : <Ingreso />;
   if (!membresia) return <CrearEspacio />;
 
   return (
@@ -73,6 +77,10 @@ function Raiz() {
             </>
           )}
           <Route path="/documentos" element={<Documentos />} />
+          <Route path="/bitacora" element={<Bitacora />} />
+          <Route path="/bitacora/nueva" element={<NuevaPublicacion />} />
+          <Route path="/seguros" element={<Seguros />} />
+          <Route path="/test-vivienda" element={<TestVivienda />} />
           <Route path="/mas" element={<Mas />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

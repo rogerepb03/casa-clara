@@ -23,10 +23,16 @@ describe('salud de propiedades', () => {
   it('Ñuñoa pierde puntos por arriendo atrasado y contrato por terminar, con motivos explicados', () => {
     const d = datos();
     const s = saludPropiedad(d.propiedades[0], d, HOY);
-    expect(s.motivos.map((m) => m.texto)).toEqual(['1 pago atrasado', 'El contrato termina en 25 días']);
-    expect(s.puntaje).toBe(60);
+    expect(s.motivos.map((m) => m.texto)).toEqual(['1 pago atrasado', 'El contrato termina en 25 días', 'Incidente abierto: mancha de humedad en el dormitorio']);
+    expect(s.puntaje).toBe(50);
     expect(s.ventanas).toBe(2);
     expect(s.nivel).toBe('atencion');
+  });
+
+  it('un incidente resuelto no resta puntos', () => {
+    const d = datos();
+    d.publicaciones = d.publicaciones.map((x) => ({ ...x, resuelto: true }));
+    expect(saludPropiedad(d.propiedades[0], d, HOY).puntaje).toBe(60);
   });
 
   it('el estacionamiento desocupado y sin documentos pierde 25', () => {

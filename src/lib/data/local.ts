@@ -2,7 +2,9 @@ import type { Api } from './api';
 import { nuevoId } from './api';
 import type { Datos, Membresia, Rol, Tabla, Usuario } from '../types';
 import { DATOS_VACIOS } from '../types';
-import { crearSemilla, ESPACIO_DEMO, PERSONA_ADMIN, PERSONA_ARRENDATARIA } from './semilla';
+import { crearSemilla, ESPACIO_DEMO, PERSONA_ADMIN, PERSONA_ARRENDATARIA, FOTOS_DEMO } from './semilla';
+
+const semilla_archivos = () => ({ ...FOTOS_DEMO });
 import { aISO } from '../fechas';
 
 /**
@@ -22,11 +24,19 @@ interface Estado {
 function leer(): Estado {
   try {
     const raw = localStorage.getItem(CLAVE);
-    if (raw) return JSON.parse(raw) as Estado;
+    if (raw) {
+      const e = JSON.parse(raw) as Estado;
+      if (!e.datos.publicaciones) {
+        const semilla = crearSemilla(new Date());
+        e.datos.publicaciones = semilla.publicaciones;
+        e.archivos = { ...semilla_archivos(), ...e.archivos };
+      }
+      return e;
+    }
   } catch {
     // Si el almacenamiento está corrupto o bloqueado, se parte de nuevo.
   }
-  return { sesion: false, rolDemo: 'administrador', datos: crearSemilla(new Date()), archivos: {} };
+  return { sesion: false, rolDemo: 'administrador', datos: crearSemilla(new Date()), archivos: semilla_archivos() };
 }
 
 let estado = leer();
@@ -50,7 +60,7 @@ export function rolDemoActual(): Rol {
 }
 
 export function reiniciarDemo() {
-  estado = { sesion: true, rolDemo: 'administrador', datos: crearSemilla(new Date()), archivos: {} };
+  estado = { sesion: true, rolDemo: 'administrador', datos: crearSemilla(new Date()), archivos: semilla_archivos() };
   guardar();
 }
 
@@ -73,6 +83,7 @@ function vistaArrendatario(d: Datos, personaId: string): Datos {
         doc.persona_id === personaId,
     ),
     solicitudes: d.solicitudes.filter((s) => idsProp.has(s.propiedad_id)),
+    publicaciones: (d.publicaciones ?? []).filter((p) => p.creado_por === 'usr-ana' || (p.visibilidad === 'propiedad' && p.propiedad_id && idsProp.has(p.propiedad_id))),
   };
 }
 
@@ -124,17 +135,18 @@ export function crearApiLocal(): Api {
     },
 
     async crear<T extends { id: string }>(tabla: Tabla, fila: Partial<T>) {
-      const esSolicitudArrendatario = tabla === 'solicitudes' && estado.rolDemo === 'arrendatario';
+      const esSolicitudArrendatario = (tabla === 'solicitudes' || tabla === 'publicaciones') && estado.rolDemo === 'arrendatario';
       if (!puedeEscribir() && !esSolicitudArrendatario) throw new Error('Tu rol no tiene permiso para hacer este cambio.');
-      const nueva = { ...fila, id: fila.id ?? nuevoId(), created_at: new Date().toISOString() } as unknown as T;
-      (estado.datos[tabla] as unknown as T[]).push(nueva);
+      const nueva = { creado_por: usuario().id, ...fila, id: fila.id ?? nuevoId(), created_at: new Date().toISOString() } as unknown as T;
+      const d = estado.datos as unknown as Record<string, T[]>;
+      (d[tabla] ??= []).push(nueva);
       guardar();
       return nueva;
     },
 
     async editar<T extends { id: string }>(tabla: Tabla, id: string, cambios: Partial<T>) {
       if (!puedeEscribir()) throw new Error('Tu rol no tiene permiso para hacer este cambio.');
-      const lista = estado.datos[tabla] as unknown as T[];
+      const lista = ((estado.datos as unknown as Record<string, T[]>)[tabla] ??= []);
       const i = lista.findIndex((f) => f.id === id);
       if (i < 0) throw new Error('No se encontró el registro.');
       lista[i] = { ...lista[i], ...cambios };
@@ -144,7 +156,7 @@ export function crearApiLocal(): Api {
 
     async borrar(tabla, id) {
       if (!puedeEscribir()) throw new Error('Tu rol no tiene permiso para hacer este cambio.');
-      const lista = estado.datos[tabla] as unknown as { id: string }[];
+      const lista = (estado.datos as unknown as Record<string, { id: string }[]>)[tabla] ?? [];
       (estado.datos as unknown as Record<string, unknown[]>)[tabla] = lista.filter((f) => f.id !== id);
       guardar();
     },

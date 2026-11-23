@@ -27,3 +27,10 @@ export const ILibro = (p: P) => <svg {...base(p)}><path d="M5 4h11a3 3 0 0 1 3 3
 export const IBoleta = (p: P) => <svg {...base(p)}><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" /><path d="M9 8h6M9 12h6" /></svg>;
 export const ISalir = (p: P) => <svg {...base(p)}><path d="M14 4h5v16h-5" /><path d="M10 8l-4 4 4 4M6 12h10" /></svg>;
 export const IHerramienta = (p: P) => <svg {...base(p)}><path d="M14.5 5.5a4 4 0 0 0-5.3 5.2L4 16l4 4 5.3-5.2a4 4 0 0 0 5.2-5.3l-2.4 2.4-2.9-.7-.7-2.9z" /></svg>;
+export const ICorazon = (p: P) => <svg {...base(p)}><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" /></svg>;
+export const IFiesta = (p: P) => <svg {...base(p)}><path d="M4 20 9 7l8 8z" /><path d="M14 4v2M19 9h2M17.5 5.5 16 7M12 2.5l.5 1" /></svg>;
+export const ICandado = (p: P) => <svg {...base(p)}><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" /><path d="M12 14.5v2.5" /></svg>;
+export const IRayo = (p: P) => <svg {...base(p)}><path d="M13 3 5 14h6l-1 7 8-11h-6z" /></svg>;
+export const IEscudo = (p: P) => <svg {...base(p)}><path d="M12 3 5 6v5c0 4.5 3 8.2 7 10 4-1.8 7-5.5 7-10V6z" /><path d="m9 12 2 2 4-4" /></svg>;
+export const IFoto = (p: P) => <svg {...base(p)}><rect x="3" y="5" width="18" height="14" rx="2.5" /><circle cx="9" cy="10" r="2" /><path d="m21 16-5-5-8 8" /></svg>;
+export const IBrujula = (p: P) => <svg {...base(p)}><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5z" /></svg>;

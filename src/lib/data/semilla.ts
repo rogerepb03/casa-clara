@@ -1,4 +1,4 @@
-import type { Datos, Espacio, Movimiento } from '../types';
+import type { Datos, Espacio, Movimiento, Publicacion } from '../types';
 import { sumarDias, sumarMeses, aISO, inicioMes } from '../fechas';
 
 /**
@@ -8,6 +8,26 @@ import { sumarDias, sumarMeses, aISO, inicioMes } from '../fechas';
 export const ESPACIO_DEMO: Espacio = { id: 'esp-demo', nombre: 'Familia de prueba', moneda_base: 'CLP' };
 export const PERSONA_ADMIN = 'per-admin';
 export const PERSONA_ARRENDATARIA = 'per-ana';
+
+
+/** Ilustraciones de ejemplo para la bitácora (SVG en línea, sin fotos reales). */
+const svg = (cuerpo: string, fondo: string) =>
+  `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><rect width='400' height='300' fill='${fondo}'/>${cuerpo}</svg>`)}`;
+
+export const FOTOS_DEMO: Record<string, string> = {
+  'demo/bitacora/cumple-1.svg': svg(
+    "<rect x='110' y='170' width='180' height='80' rx='10' fill='#f7d9e3'/><rect x='110' y='170' width='180' height='18' fill='#e98fb0'/><rect x='130' y='120' width='140' height='54' rx='8' fill='#fbe9ef'/><rect x='130' y='120' width='140' height='12' fill='#e98fb0'/>" +
+    [160, 190, 220, 250].map((x) => `<rect x='${x - 3}' y='92' width='6' height='28' fill='#5b8fd0'/><ellipse cx='${x}' cy='86' rx='5' ry='8' fill='#f5c04f'/>`).join('') +
+    "<circle cx='60' cy='60' r='16' fill='#5b8fd0' opacity='.6'/><circle cx='340' cy='50' r='12' fill='#e7a83e' opacity='.7'/><circle cx='320' cy='110' r='9' fill='#6aa77c' opacity='.7'/>", '#fff4e6'),
+  'demo/bitacora/cumple-2.svg': svg(
+    "<circle cx='140' cy='150' r='42' fill='#e7a83e'/><circle cx='260' cy='140' r='46' fill='#5b8fd0'/><rect x='98' y='190' width='84' height='110' rx='30' fill='#e7a83e'/><rect x='214' y='184' width='92' height='116' rx='30' fill='#5b8fd0'/><path d='M120 60 l20 -30 l20 30z' fill='#cf7ea8'/><path d='M240 52 l20 -30 l20 30z' fill='#6aa77c'/>", '#eef4fb'),
+  'demo/bitacora/fiestas.svg': svg(
+    "<path d='M0 40 Q200 110 400 40' stroke='#1a2747' stroke-width='3' fill='none'/>" +
+    Array.from({ length: 9 }, (_, i) => { const x = 20 + i * 45; const y = 40 + 70 * Math.sin((Math.PI * x) / 400) * 0.8; const col = ['#d52b1e', '#ffffff', '#0039a6'][i % 3]; return `<path d='M${x - 14} ${y} L${x + 14} ${y} L${x} ${y + 30}Z' fill='${col}' stroke='#1a2747' stroke-width='1'/>`; }).join('') +
+    "<ellipse cx='200' cy='235' rx='120' ry='26' fill='#c98a4a'/><path d='M120 232 Q200 160 280 232' fill='#e5b17a'/><path d='M140 222 Q200 180 260 222' stroke='#c98a4a' stroke-width='4' fill='none'/>", '#f3f7fd'),
+  'demo/bitacora/humedad.svg': svg(
+    "<rect x='0' y='0' width='400' height='300' fill='#e9e4da'/><path d='M260 20 Q300 60 280 110 Q320 150 290 200 Q250 230 230 170 Q190 150 215 100 Q200 50 260 20Z' fill='#b9ab8f' opacity='.75'/><path d='M270 50 Q290 80 275 110 Q295 140 280 170 Q255 185 245 150 Q225 130 240 100 Q232 70 270 50Z' fill='#8f8063' opacity='.6'/><rect x='0' y='255' width='400' height='45' fill='#cfc6b4'/>", '#e9e4da'),
+};
 
 export function crearSemilla(hoy: Date): Datos {
   const e = ESPACIO_DEMO.id;
@@ -67,6 +87,7 @@ export function crearSemilla(hoy: Date): Datos {
       { id: 'mie2', espacio_id: e, user_id: 'usr-ana', email: 'ana@correo.cl', rol: 'arrendatario', estado: 'activo', persona_id: PERSONA_ARRENDATARIA },
       { id: 'mie3', espacio_id: e, user_id: null, email: 'camila@correo.cl', rol: 'familiar', estado: 'invitado', persona_id: 'per-camila' },
     ],
+    publicaciones: [] as Publicacion[],
   };
 
   // Seis meses de historia + el mes en curso
@@ -112,6 +133,17 @@ export function crearSemilla(hoy: Date): Datos {
   for (let w = 0; w < 5; w++) {
     mov({ categoria_id: cat('Supermercado'), descripcion: 'Feria', monto: 32000 + w * 1500, fecha: aISO(sumarDias(hoy, -7 * w)) });
   }
+  const pub = (x: Partial<Publicacion>): Publicacion => ({
+    id: '', espacio_id: e, tipo: 'recuerdo', titulo: '', texto: null, fecha: aISO(hoy), propiedad_id: null, fotos: [],
+    visibilidad: 'familia', gravedad: null, resuelto: false, creado_por: 'usr-demo', ...x,
+    created_at: new Date(`${x.fecha ?? aISO(hoy)}T18:00:00`).toISOString(),
+  });
+  datos.publicaciones = [
+    pub({ id: 'pub-cumple', tipo: 'evento_familiar', titulo: 'Cumpleaños 10 de Camila', texto: 'Torta de frambuesa y toda la familia en la casa de Viña. Camila sopló las velas al segundo intento.', fecha: d(-12), fotos: ['demo/bitacora/cumple-1.svg', 'demo/bitacora/cumple-2.svg'] }),
+    pub({ id: 'pub-humedad', tipo: 'dano', titulo: 'Mancha de humedad en el dormitorio', texto: 'Aparece en la esquina del cielo después de las lluvias. Parece venir del departamento de arriba.', fecha: d(-4), propiedad_id: 'pro-nunoa', visibilidad: 'propiedad', gravedad: 2, fotos: ['demo/bitacora/humedad.svg'], creado_por: 'usr-ana' }),
+    pub({ id: 'pub-fiestas', tipo: 'recuerdo', titulo: 'Fiestas Patrias en familia', texto: 'Empanadas caseras y cueca en el patio.', fecha: aISO(sumarMeses(hoy, -2)), fotos: ['demo/bitacora/fiestas.svg'] }),
+    pub({ id: 'pub-corte', tipo: 'incidente', titulo: 'Corte de luz en el local', texto: 'Se cortó la luz en todo el sector por 6 horas. Sin daños.', fecha: d(-30), propiedad_id: 'pro-conce', visibilidad: 'propiedad', gravedad: 1, resuelto: true }),
+  ];
   datos.movimientos = movs.filter((m) => m.fecha <= aISO(sumarDias(hoy, 31)));
   return datos;
 }

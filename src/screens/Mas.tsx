@@ -4,7 +4,7 @@ import { useApp, useHoy } from '../state/App';
 import { api } from '../lib/data';
 import { cambiarRolDemo, reiniciarDemo } from '../lib/data/local';
 import { Barra, Campo, Encabezado, Hoja, Vacio } from '../components/Comunes';
-import { IBoleta, ICalendario, ICarpeta, IFlecha, ILibro, ILlama, ILlave, IMas2, IPersonas, IPropiedades, ISalir } from '../components/Iconos';
+import { IBoleta, IBrujula, ICalendario, ICarpeta, IDocumentos, IEscudo, IFlecha, ILibro, ILlama, ILlave, IMas2, IPersonas, IPropiedades, ISalir } from '../components/Iconos';
 import { logros, racha, saludPropiedad, type Logro } from '../lib/juego';
 import { ETIQUETA_ROL, ETIQUETA_TIPO_PERSONA } from '../lib/formato';
 import type { Persona, Rol, TipoPersona } from '../lib/types';
@@ -27,7 +27,10 @@ export default function Mas() {
     <>
       <Encabezado titulo={usuario?.nombre ?? 'Mi cuenta'} sub={`${membresia ? ETIQUETA_ROL[membresia.rol] : ''} en ${membresia?.espacio.nombre ?? ''}`} />
       <div className="lista">
+        <Link className="fila" to="/documentos"><IDocumentos /><span className="cuerpo titulo">Documentos</span><IFlecha width={18} /></Link>
         {!esArrendatario && <Link className="fila" to="/logros"><ILlama /><span className="cuerpo titulo">Logros y racha</span><IFlecha width={18} /></Link>}
+        {!esArrendatario && <Link className="fila" to="/seguros"><IEscudo /><span className="cuerpo titulo">Seguros</span><IFlecha width={18} /></Link>}
+        <Link className="fila" to="/test-vivienda"><IBrujula /><span className="cuerpo titulo">Test de vivienda</span><IFlecha width={18} /></Link>
         {!esArrendatario && <Link className="fila" to="/personas"><IPersonas /><span className="cuerpo titulo">Personas</span><IFlecha width={18} /></Link>}
         {membresia?.rol === 'administrador' && <Link className="fila" to="/miembros"><IPropiedades /><span className="cuerpo titulo">Quién tiene acceso</span><IFlecha width={18} /></Link>}
         <button className="fila" onClick={salir}><ISalir /><span className="cuerpo titulo">Cerrar sesión</span></button>

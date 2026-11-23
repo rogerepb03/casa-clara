@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Api } from './api';
 import { nuevoId } from './api';
-import type { Datos, Membresia, Rol, Tabla, Usuario } from '../types';
+import type { Datos, Membresia, Rol, Usuario } from '../types';
 
 /**
  * Adaptador de producción: habla con tu proyecto Supabase.
@@ -66,14 +66,14 @@ export function crearApiSupabase(url: string, anonKey: string): Api {
     },
 
     async cargar(espacioId): Promise<Datos> {
-      const tablas: Tabla[] = [
+      const tablas: (keyof Datos)[] = [
         'propiedades', 'personas', 'propiedad_personas', 'contratos', 'categorias',
-        'movimientos', 'documentos', 'solicitudes', 'miembros',
+        'movimientos', 'documentos', 'solicitudes', 'miembros', 'publicaciones',
       ];
       const resultados = await Promise.all(
         tablas.map((t) => {
           let q = sb.from(t).select('*').eq('espacio_id', espacioId);
-          if (t === 'movimientos') q = q.order('fecha', { ascending: false }).limit(5000);
+          if (t === 'movimientos' || t === 'publicaciones') q = q.order('fecha', { ascending: false }).limit(5000);
           return q;
         }),
       );

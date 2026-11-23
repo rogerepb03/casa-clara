@@ -271,3 +271,43 @@ p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- Bitácora ---------- */
+.post { overflow: hidden; }
+.post + .post { margin-top: 12px; }
+.post .fotos { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 2px; background: var(--noche); scrollbar-width: none; }
+.post .fotos button { flex: 0 0 100%; scroll-snap-align: start; padding: 0; border: 0; background: none; cursor: zoom-in; aspect-ratio: 4 / 3; }
+.post .fotos img { width: 100%; height: 100%; object-fit: cover; }
+.post .cuerpo { padding: 14px 16px 16px; display: grid; gap: 6px; }
+.post .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--tinta-2); font-size: .85rem; }
+.post .cuantas { position: relative; }
+.post .cuantas span { position: absolute; right: 10px; top: -34px; background: rgba(22,34,59,.72); color: #fff; font-size: .78rem; font-weight: 700; padding: 3px 8px; border-radius: 99px; }
+.post.incidente { border-left: 4px solid var(--alerta); }
+.post.incidente.grave { border-left-color: var(--urgente); }
+.post.incidente.resuelto { border-left-color: var(--ok); }
+.tipos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tipos button { min-height: 86px; border: 1px solid var(--linea); background: var(--papel); border-radius: 14px; display: grid; place-items: center; gap: 6px; padding: 10px 6px; font-weight: 700; font-size: .88rem; cursor: pointer; color: var(--tinta); }
+.tipos button[aria-pressed='true'] { border: 2px solid var(--puerto); background: var(--puerto-suave); }
+.tipos button svg { width: 26px; height: 26px; }
+.tipos .grave svg { color: var(--urgente); }
+.miniaturas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.miniaturas figure { margin: 0; position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #e7ecf2; }
+.miniaturas img { width: 100%; height: 100%; object-fit: cover; }
+.miniaturas button { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(22,34,59,.75); color: #fff; font-weight: 700; cursor: pointer; }
+.visor { position: fixed; inset: 0; z-index: 70; background: rgba(10,16,30,.94); display: grid; place-items: center; padding: 20px; }
+.visor img { max-width: 100%; max-height: 86dvh; border-radius: 8px; }
+.visor .cerrar { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; }
+
+/* ---------- Test de vivienda ---------- */
+.contador { display: flex; align-items: center; gap: 12px; }
+.contador output { min-width: 2ch; text-align: center; font-family: var(--f-titulo); font-weight: 700; font-size: 1.4rem; }
+.contador .btn-icono { font-size: 1.4rem; font-weight: 700; }
+.contador .btn-icono:disabled { opacity: .4; }
+.invitacion { display: flex; gap: 14px; align-items: center; padding: 16px; text-decoration: none; color: inherit; margin-top: 18px; }
+.invitacion .icono { flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--puerto-suave); color: var(--puerto); display: grid; place-items: center; }
+
+/* ---------- Seguros ---------- */
+.aseguradora { display: grid; gap: 4px; padding: 14px 16px; border-top: 1px solid var(--linea); }
+.aseguradora:first-child { border-top: 0; }
+.aseguradora .acciones { margin-top: 8px; }
+.solicitud { white-space: pre-wrap; font-size: .85rem; background: #f8fafc; border: 1px solid var(--linea); border-radius: var(--r-chico); padding: 12px; max-height: 260px; overflow: auto; font-family: var(--f-texto); }
