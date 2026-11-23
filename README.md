@@ -56,9 +56,12 @@ Para desarrollo local con tus datos: copia `.env.example` como `.env.local` y co
 - **iPhone:** abre la dirección en Safari → botón Compartir → *Agregar a pantalla de inicio*.
 - **Android:** abre en Chrome → menú ⋮ → *Instalar app*.
 
-## Respaldos automáticos
+## Respaldos
 
-El flujo *Respaldo semanal* exporta tu base de datos cada lunes y la guarda 90 días en GitHub (Actions → Respaldo semanal → Artifacts). Para activarlo agrega el secreto `SUPABASE_DB_URL` (Supabase → botón **Connect** → *Session pooler*, con tu contraseña de base de datos). **Usa un repositorio privado** si activas respaldos.
+Este repositorio es público: contiene solo código, nunca datos. Tus datos viven en Supabase, protegidos por inicio de sesión y por las reglas de cada rol.
+
+- **Supabase Pro** (US$25 al mes) hace respaldos diarios automáticos.
+- **Respaldo manual gratis:** Supabase → Database → Backups, o desde tu computador con `pg_dump`. Guárdalo en tu computador o en tu nube personal, **nunca en este repositorio**.
 
 ## Cómo está hecha
 
@@ -71,7 +74,7 @@ El flujo *Respaldo semanal* exporta tu base de datos cada lunes y la guarda 90 d
 | `src/lib/data/` | Acceso a datos: `supabase.ts` (real) y `local.ts` (modo de prueba) con la misma interfaz |
 | `src/styles.css` | Colores, tipografías y estilos. Los colores están arriba, en `:root` |
 | `supabase/` | Base de datos (`schema.sql`), función de notificaciones push y su guía |
-| `.github/workflows/` | Publicación automática y respaldo semanal |
+| `.github/workflows/` | Pruebas y publicación automática |
 
 Tecnologías: React 18, TypeScript, Vite, PWA (funciona sin conexión), Supabase. Sin librerías de interfaz: todo el diseño es propio.
 
