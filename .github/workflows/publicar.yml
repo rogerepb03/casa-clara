@@ -1,0 +1,52 @@
+# Cada vez que subes cambios a "main": prueba la lógica, construye la app
+# y la publica gratis en GitHub Pages.
+name: Probar y publicar
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pruebas de la lógica (finanzas y modo juego)
+        run: npm test
+        env:
+          TZ: America/Santiago
+      - name: Construir
+        run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          # Si no configuras estos secretos, la app se publica en modo de prueba.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4
